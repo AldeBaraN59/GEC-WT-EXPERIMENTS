@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses — abcd</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="banner">🎓 New semester starting March 1st — Get 30% off all courses. <a href="pricing.html">See plans →</a></div>
+
+  <nav>
+    <a class="nav-logo" href="index.html">ab<span>cd</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="courses.html" class="active">Courses</a>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="contact.html">Contact</a>
+      <a href="pricing.html" class="nav-cta">Enroll Now</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <span class="tag">Course Catalog</span>
+      <h1>320+ courses. Real skills. Real results.</h1>
+      <p>Every course is built by practitioners with years of hands-on experience. Learn at your own pace with lifetime access.</p>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <div class="filters-bar-inner">
+      <button class="filter-btn active" onclick="filterBtn(this)">All Categories</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Design</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Development</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Business</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Photography</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Data Science</button>
+      <button class="filter-btn" onclick="filterBtn(this)">Writing</button>
+    </div>
+  </div>
+
+  <!-- COURSE GRID -->
+  <div class="courses-full">
+    <div class="courses-full-inner">
+      <div class="courses-grid">
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb design">🎨</div>
+          <div class="course-body">
+            <div class="course-level">Intermediate · Design</div>
+            <h3>UI/UX Design Fundamentals</h3>
+            <p>Master user-centered design from research to high-fidelity prototypes in Figma.</p>
+            <div class="course-meta"><span>⭐ 4.9</span><span>⏱ 24h</span><span>$89</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb code">💻</div>
+          <div class="course-body">
+            <div class="course-level">Beginner · Development</div>
+            <h3>Full-Stack Web Development</h3>
+            <p>HTML, CSS, JavaScript, React, and Node.js — build complete web applications.</p>
+            <div class="course-meta"><span>⭐ 4.8</span><span>⏱ 48h</span><span>$129</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb business">📈</div>
+          <div class="course-body">
+            <div class="course-level">Advanced · Business</div>
+            <h3>Product Strategy &amp; Growth</h3>
+            <p>Build products users love using frameworks borrowed from top product teams.</p>
+            <div class="course-meta"><span>⭐ 4.7</span><span>⏱ 18h</span><span>$79</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb photo">📸</div>
+          <div class="course-body">
+            <div class="course-level">Beginner · Photography</div>
+            <h3>Portrait Photography Mastery</h3>
+            <p>Light, composition, post-processing — everything you need to shoot pro portraits.</p>
+            <div class="course-meta"><span>⭐ 4.9</span><span>⏱ 16h</span><span>$69</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb data">📊</div>
+          <div class="course-body">
+            <div class="course-level">Intermediate · Data Science</div>
+            <h3>Data Science with Python</h3>
+            <p>Pandas, visualization, machine learning — become a data professional.</p>
+            <div class="course-meta"><span>⭐ 4.8</span><span>⏱ 36h</span><span>$99</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb writing">✍️</div>
+          <div class="course-body">
+            <div class="course-level">All levels · Writing</div>
+            <h3>Copywriting for Digital Media</h3>
+            <p>Craft compelling copy that converts — for ads, landing pages, and email.</p>
+            <div class="course-meta"><span>⭐ 4.6</span><span>⏱ 12h</span><span>$59</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb design">🖌️</div>
+          <div class="course-body">
+            <div class="course-level">Advanced · Design</div>
+            <h3>Brand Identity Design</h3>
+            <p>Create memorable brands from strategy to visual system delivery.</p>
+            <div class="course-meta"><span>⭐ 4.9</span><span>⏱ 20h</span><span>$89</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb code">⚛️</div>
+          <div class="course-body">
+            <div class="course-level">Intermediate · Development</div>
+            <h3>React &amp; TypeScript Bootcamp</h3>
+            <p>Build scalable frontend applications with modern React patterns.</p>
+            <div class="course-meta"><span>⭐ 4.8</span><span>⏱ 30h</span><span>$119</span></div>
+          </div>
+        </a>
+        <a class="course-card" href="detail.html">
+          <div class="course-thumb business">💼</div>
+          <div class="course-body">
+            <div class="course-level">Beginner · Business</div>
+            <h3>Freelance Business 101</h3>
+            <p>Land clients, price your work, and build a sustainable freelance career.</p>
+            <div class="course-meta"><span>⭐ 4.7</span><span>⏱ 10h</span><span>$49</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="index.html">ab<span>cd</span></a>
+          <p>The modern learning platform for ambitious people who want to build real skills.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="courses.html">All Courses</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 abcd Learning, Inc. All rights reserved.</p>
+        <a class="btn btn-gold" href="pricing.html" style="padding:0.6rem 1.5rem;font-size:0.85rem;">Start learning today</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function filterBtn(el) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

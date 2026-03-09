@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — abcd</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="banner">🎓 New semester starting March 1st — Get 30% off all courses. <a href="pricing.html">See plans →</a></div>
+
+  <nav>
+    <a class="nav-logo" href="index.html">ab<span>cd</span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="about.html">About</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="contact.html">Contact</a>
+      <a href="pricing.html" class="nav-cta">Enroll Now</a>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-greeting">Welcome back,</div>
+      <div class="sidebar-name">Uddhav</div>
+      <ul class="sidebar-nav">
+        <li><a href="dashboard.html" class="active">🏠 Overview</a></li>
+        <li><a href="#">📚 My Courses</a></li>
+        <li><a href="#">🏆 Certificates</a></li>
+        <li><a href="#">📅 Schedule</a></li>
+        <li><a href="#">💬 Community</a></li>
+        <li><a href="courses.html">🔍 Browse Catalog</a></li>
+        <li><a href="pricing.html">⭐ Upgrade to Pro</a></li>
+        <li><a href="contact.html">⚙️ Settings</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+      <div class="dash-header">
+        <h2>Good morning,Udd ☀️</h2>
+        <p>You have 2 courses in progress. Keep going — you're on a 7-day streak!</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <div class="stat-label">Courses Enrolled</div>
+          <div class="stat-value">4</div>
+          <div class="stat-sub">+1 this month</div>
+        </div>
+        <div class="dash-stat">
+          <div class="stat-label">Hours Learned</div>
+          <div class="stat-value">38</div>
+          <div class="stat-sub">↑ 12h this week</div>
+        </div>
+        <div class="dash-stat">
+          <div class="stat-label">Certificates</div>
+          <div class="stat-value">2</div>
+          <div class="stat-sub">2 in progress</div>
+        </div>
+        <div class="dash-stat">
+          <div class="stat-label">Day Streak</div>
+          <div class="stat-value">🔥 7</div>
+          <div class="stat-sub">Personal best!</div>
+        </div>
+      </div>
+
+      <!-- MY COURSES -->
+      <div class="dash-section-title">Continue Learning</div>
+      <div class="my-courses-grid">
+        <div class="my-course-card">
+          <div class="my-course-thumb design">🎨</div>
+          <div class="my-course-info">
+            <h4>UI/UX Design Fundamentals</h4>
+            <span>Module 3 · Figma Mastery</span>
+            <div class="my-course-progress">
+              <div class="prog-label"><span>Progress</span><span>67%</span></div>
+              <div class="prog-track"><div class="prog-fill" style="width:67%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="my-course-card">
+          <div class="my-course-thumb code">💻</div>
+          <div class="my-course-info">
+            <h4>Full-Stack Web Development</h4>
+            <span>Module 7 · React Hooks</span>
+            <div class="my-course-progress">
+              <div class="prog-label"><span>Progress</span><span>42%</span></div>
+              <div class="prog-track"><div class="prog-fill" style="width:42%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="my-course-card">
+          <div class="my-course-thumb business">📈</div>
+          <div class="my-course-info">
+            <h4>Product Strategy &amp; Growth</h4>
+            <span>Completed ✓</span>
+            <div class="my-course-progress">
+              <div class="prog-label"><span>Progress</span><span>100%</span></div>
+              <div class="prog-track"><div class="prog-fill green" style="width:100%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="my-course-card">
+          <div class="my-course-thumb writing">✍️</div>
+          <div class="my-course-info">
+            <h4>Copywriting for Digital Media</h4>
+            <span>Completed ✓</span>
+            <div class="my-course-progress">
+              <div class="prog-label"><span>Progress</span><span>100%</span></div>
+              <div class="prog-track"><div class="prog-fill green" style="width:100%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="dash-section-title">Recent Activity</div>
+      <div class="activity-list">
+        <div class="activity-item"><div class="activity-dot gold"></div> Completed lesson: "Auto Layout in Figma" <span class="time">2h ago</span></div>
+        <div class="activity-item"><div class="activity-dot green"></div> Earned certificate: Copywriting for Digital Media <span class="time">Yesterday</span></div>
+        <div class="activity-item"><div class="activity-dot blue"></div> Started lesson: "React State Management" <span class="time">2 days ago</span></div>
+        <div class="activity-item"><div class="activity-dot gold"></div> Completed quiz: UX Research Methods (94%) <span class="time">3 days ago</span></div>
+        <div class="activity-item"><div class="activity-dot green"></div> Submitted project: "Responsive Landing Page" <span class="time">5 days ago</span></div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
