@@ -1,1 +1,7 @@
 D:\XAMPP\php\php.exe -S localhost:8000
+
+config env
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=yourpassword
+DB_NAME=luminary_db

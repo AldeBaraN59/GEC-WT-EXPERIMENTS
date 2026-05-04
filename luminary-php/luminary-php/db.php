@@ -1,16 +1,14 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', 'shivankabcd0604!1');
-define('DB_NAME', 'luminary_db');
-
-$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
+// db.php — credentials loaded from config.env (not tracked by git)
+$env  = parse_ini_file(__DIR__ . '/config.env');
+$conn = mysqli_connect(
+    $env['DB_HOST'],
+    $env['DB_USER'],
+    $env['DB_PASS'],
+    $env['DB_NAME']
+);
 if (!$conn) {
-    die('Database connection failed: ' . mysqli_connect_error());
+    error_log(mysqli_connect_error());
+    die("Database error. Please try again later.");
 }
-
-function get_db_connection(): mysqli {
-    global $conn;
-    return $conn;
-}
+?>
