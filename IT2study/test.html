@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>innerHTML Demo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<body>
+
+    <h1>innerHTML Demo 🚀</h1>
+
+    <p id="hi">This is a simple test HTML page.</p>
+ <ol class="none">
+    <li> hi</li>
+    <li> bye</li>
+    <li> my</li>
+</ol>
+
+  
+
+    <script>
+     $(document).ready(function() {
+    // Select every <li> element and loop through them
+    $('li').each(function(index) {
+        // 'index' starts at 0, so we use (index) or (index + 1)
+        // .prepend() adds the bold tag at the very start of the <li>
+      
+        $(this).prepend('<b>' + index + ': </b>');
+    });
+});
+    </script>
+
+</body>
+</html> 
