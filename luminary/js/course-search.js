@@ -1,3 +1,10 @@
+/**
+ * course-search.js
+ * 
+ * A vanilla JavaScript module that injects a search bar and provides 
+ * real-time fuzzy searching capabilities for the course catalog. 
+ * It filters visible course cards and highlights matching text.
+ */
 (function () {
   let cards = [];
 

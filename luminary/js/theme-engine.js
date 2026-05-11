@@ -1,5 +1,10 @@
-// theme-engine.js — 4-theme switcher with smooth CSS variable transitions
-
+/**
+ * theme-engine.js
+ * 
+ * A vanilla JavaScript theme switcher that supports multiple color palettes 
+ * (Classic, Midnight, Sepia, Frost). It injects a floating UI to swap themes,
+ * modifies CSS variables dynamically, and saves the preference to localStorage.
+ */
 (function () {
   const KEY = "luminary_theme";
   const THEMES = {
@@ -17,6 +22,7 @@
     Object.keys(t).filter(k => k.startsWith("--")).forEach(k => root.style.setProperty(k, t[k]));
     current = key;
     localStorage.setItem(KEY, key);
+    document.cookie = KEY + "=" + key + "; path=/; max-age=31536000";
     document.querySelectorAll(".theme-btn").forEach(b => {
       b.style.border = b.dataset.theme === key ? "2px solid var(--gold)" : "2px solid transparent";
     });

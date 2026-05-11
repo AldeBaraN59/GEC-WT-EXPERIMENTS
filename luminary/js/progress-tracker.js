@@ -1,5 +1,10 @@
-// progress-tracker.js — Tracks visited pages, courses viewed, and scroll depth
-
+/**
+ * progress-tracker.js
+ * 
+ * A vanilla JavaScript module that tracks user engagement using localStorage.
+ * It monitors page visits, scroll depth, and course clicks, and renders 
+ * a floating Heads-Up Display (HUD) to show the user their progress.
+ */
 (function () {
   const KEY  = "luminary_progress";
   const page = location.pathname.split("/").pop() || "index.html";
