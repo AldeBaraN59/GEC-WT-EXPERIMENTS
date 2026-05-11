@@ -1,4 +1,4 @@
-<?php
+gi<?php
 // login.php — Login & Register Page
 require_once 'session.php';
 require_once 'db.php';

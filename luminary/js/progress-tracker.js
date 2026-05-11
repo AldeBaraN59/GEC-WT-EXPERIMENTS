@@ -1,8 +1,22 @@
+<<<<<<< HEAD
 let viewedCourses = [];
 
 function markAsViewed(card) {
   const title = card.getElementsByTagName("h3")[0];
   if (!title) return;
+=======
+/**
+ * progress-tracker.js
+ * 
+ * A vanilla JavaScript module that tracks user engagement using localStorage.
+ * It monitors page visits, scroll depth, and course clicks, and renders 
+ * a floating Heads-Up Display (HUD) to show the user their progress.
+ */
+(function () {
+  const KEY  = "luminary_progress";
+  const page = location.pathname.split("/").pop() || "index.html";
+  let data   = JSON.parse(localStorage.getItem(KEY) || '{"pages":{},"courses":[]}');
+>>>>>>> 5c89bf09765bb096d2e163c08678dca054a17330
 
   const name = title.innerText;
 

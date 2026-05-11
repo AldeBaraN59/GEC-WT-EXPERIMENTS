@@ -1,7 +1,19 @@
+<<<<<<< HEAD
 function searchCourses() {
   const query = document.getElementById("searchBox").value.toLowerCase();
   const cards = document.getElementsByClassName("course-card");
   let count = 0;
+=======
+/**
+ * course-search.js
+ * 
+ * A vanilla JavaScript module that injects a search bar and provides 
+ * real-time fuzzy searching capabilities for the course catalog. 
+ * It filters visible course cards and highlights matching text.
+ */
+(function () {
+  let cards = [];
+>>>>>>> 5c89bf09765bb096d2e163c08678dca054a17330
 
   for (let i = 0; i < cards.length; i++) {
     const title = cards[i].getElementsByTagName("h3")[0];

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const themes = {
   classic:  { "--ink":"#0d0d0d", "--paper":"#f5f0e8", "--cream":"#faf7f2", "--gold":"#c8922a", "--gold-light":"#e8b84b", "--muted":"#8a8278", "--border":"#d8cfc0" },
   midnight: { "--ink":"#e8e4dc", "--paper":"#1a1a1a", "--cream":"#141414", "--gold":"#e8b84b", "--gold-light":"#f5d07a", "--muted":"#6a6460", "--border":"#2a2a2a" },
@@ -12,6 +13,36 @@ function applyTheme(key) {
   const vars = Object.keys(t);
   for (let i = 0; i < vars.length; i++) {
     document.documentElement.style.setProperty(vars[i], t[vars[i]]);
+=======
+/**
+ * theme-engine.js
+ * 
+ * A vanilla JavaScript theme switcher that supports multiple color palettes 
+ * (Classic, Midnight, Sepia, Frost). It injects a floating UI to swap themes,
+ * modifies CSS variables dynamically, and saves the preference to localStorage.
+ */
+(function () {
+  const KEY = "luminary_theme";
+  const THEMES = {
+    classic: { icon:"☀️", label:"Classic", "--ink":"#0d0d0d","--paper":"#f5f0e8","--cream":"#faf7f2","--gold":"#c8922a","--gold-light":"#e8b84b","--muted":"#8a8278","--border":"#d8cfc0" },
+    midnight:{ icon:"🌙", label:"Midnight","--ink":"#e8e4dc","--paper":"#1a1a1a","--cream":"#141414","--gold":"#e8b84b","--gold-light":"#f5d07a","--muted":"#6a6460","--border":"#2a2a2a" },
+    sepia:   { icon:"📜", label:"Sepia",   "--ink":"#2c1a0e","--paper":"#f2e8d5","--cream":"#faf4e8","--gold":"#a0621a","--gold-light":"#c8922a","--muted":"#7a6a58","--border":"#c8b898" },
+    frost:   { icon:"❄️", label:"Frost",   "--ink":"#1a2a3a","--paper":"#eef4fb","--cream":"#f5f9ff","--gold":"#2a7ab8","--gold-light":"#4a9ad8","--muted":"#6a8298","--border":"#c8d8e8" },
+  };
+
+  let current = localStorage.getItem(KEY) || (matchMedia("(prefers-color-scheme: dark)").matches ? "midnight" : "classic");
+
+  function applyTheme(key) {
+    const t = THEMES[key]; if (!t) return;
+    const root = document.documentElement;
+    Object.keys(t).filter(k => k.startsWith("--")).forEach(k => root.style.setProperty(k, t[k]));
+    current = key;
+    localStorage.setItem(KEY, key);
+    document.cookie = KEY + "=" + key + "; path=/; max-age=31536000";
+    document.querySelectorAll(".theme-btn").forEach(b => {
+      b.style.border = b.dataset.theme === key ? "2px solid var(--gold)" : "2px solid transparent";
+    });
+>>>>>>> 5c89bf09765bb096d2e163c08678dca054a17330
   }
 
   let label = "";
