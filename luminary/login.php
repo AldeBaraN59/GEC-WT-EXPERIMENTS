@@ -3,10 +3,16 @@ require_once 'includes/init.php';
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Check
+    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
+        die("CSRF token validation failed.");
+    }
+
     $email = sanitize($_POST['email']);
     $password = $_POST['password'];
+    $remember = isset($_POST['remember']);
 
-    if (login($pdo, $email, $password)) {
+    if (login($pdo, $email, $password, $remember)) {
         if (isset($_SESSION['role']) && $_SESSION['role'] === 'mentor') {
             redirect('mentor_dashboard.php');
         } else {
@@ -105,6 +111,8 @@ require_once 'includes/header.php';
     </div>
 
     <form action="login.php" method="POST">
+      <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+      
       <div class="form-group">
         <label>Email Address</label>
         <input type="email" name="email" placeholder="jane@example.com" required style="width:100%; padding:0.9rem; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.03); color:var(--text-main); margin-bottom:1.25rem;">
@@ -113,6 +121,14 @@ require_once 'includes/header.php';
         <label>Password</label>
         <input type="password" name="password" placeholder="••••••••" required style="width:100%; padding:0.9rem; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.03); color:var(--text-main); margin-bottom:1.5rem;">
       </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; font-size:0.85rem;">
+          <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-muted);">
+              <input type="checkbox" name="remember" style="accent-color:var(--gold);"> Remember me
+          </label>
+          <a href="#" style="color:var(--gold); text-decoration:none;">Forgot password?</a>
+      </div>
+
       <button type="submit" class="btn btn-gold form-submit" style="width: 100%; padding: 1rem; font-weight: 700;">Log In →</button>
     </form>
 

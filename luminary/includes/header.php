@@ -28,6 +28,18 @@ require_once __DIR__ . '/init.php';
 </head>
 <body>
 
+  <!-- FLASH MESSAGES -->
+  <?php $flash = getFlash(); if ($flash): ?>
+    <div class="flash-message <?php echo $flash['type']; ?>" id="flashMessage" style="position:fixed; top:20px; right:20px; z-index:10000; padding:1rem 1.5rem; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.3); display:flex; align-items:center; gap:1rem; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); background: <?php echo $flash['type'] === 'success' ? 'rgba(46, 213, 115, 0.9)' : 'rgba(255, 71, 87, 0.9)'; ?>; color:#fff; animation: slideIn 0.3s ease-out;">
+      <span><?php echo htmlspecialchars($flash['message']); ?></span>
+      <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; padding:0; display:flex;">&times;</button>
+    </div>
+    <style>
+      @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+    <script>setTimeout(() => document.getElementById('flashMessage')?.remove(), 5000);</script>
+  <?php endif; ?>
+
   <!-- BANNER -->
   <div class="banner">🎓 New semester starting March 1st — Get 30% off all courses. <a href="pricing.php">See plans →</a></div>
 

@@ -9,9 +9,33 @@ if ($currentUser['role'] !== 'mentor') {
 $pageTitle = "Mentor Dashboard";
 require_once 'includes/header.php';
 
+// Fetch Mentor's Courses
 $stmt = $pdo->prepare("SELECT * FROM courses WHERE mentor_id = ? ORDER BY created_at DESC");
 $stmt->execute([$currentUser['id']]);
 $courses = $stmt->fetchAll();
+
+// Calculate Revenue and Total Students
+$revenueStmt = $pdo->prepare("
+    SELECT SUM(e.price_paid) as total_revenue, COUNT(e.id) as total_enrollments
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    WHERE c.mentor_id = ?
+");
+$revenueStmt->execute([$currentUser['id']]);
+$stats = $revenueStmt->fetch();
+
+// Fetch Recent Enrollments
+$enrollStmt = $pdo->prepare("
+    SELECT e.*, u.username, u.email, c.title as course_title
+    FROM enrollments e
+    JOIN users u ON e.user_id = u.id
+    JOIN courses c ON e.course_id = c.id
+    WHERE c.mentor_id = ?
+    ORDER BY e.enrolled_at DESC
+    LIMIT 5
+");
+$enrollStmt->execute([$currentUser['id']]);
+$recentEnrollments = $enrollStmt->fetchAll();
 ?>
 
 <div class="dashboard-layout">
@@ -57,36 +81,86 @@ $courses = $stmt->fetchAll();
       <a href="create_course.php" class="btn btn-gold" style="box-shadow: 0 4px 15px rgba(200,146,42,0.3);">+ Create New Course</a>
     </div>
 
-    <div class="dash-section-title">Your Published Courses</div>
+    <!-- STATS GRID -->
+    <div class="dash-stats-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1.5rem; margin-bottom:3rem;">
+        <div class="dash-stat-card" style="background:var(--bg-elevated); border:1px solid var(--border); padding:1.5rem; border-radius:12px;">
+            <div class="stat-label" style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Total Revenue</div>
+            <div class="stat-value" style="font-size:1.75rem; font-weight:700; color:var(--gold);"><?= formatPrice($stats['total_revenue'] ?? 0) ?></div>
+        </div>
+        <div class="dash-stat-card" style="background:var(--bg-elevated); border:1px solid var(--border); padding:1.5rem; border-radius:12px;">
+            <div class="stat-label" style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Total Students</div>
+            <div class="stat-value" style="font-size:1.75rem; font-weight:700; color:var(--text-main);"><?= number_format($stats['total_enrollments'] ?? 0) ?></div>
+        </div>
+        <div class="dash-stat-card" style="background:var(--bg-elevated); border:1px solid var(--border); padding:1.5rem; border-radius:12px;">
+            <div class="stat-label" style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Active Courses</div>
+            <div class="stat-value" style="font-size:1.75rem; font-weight:700; color:var(--text-main);"><?= count($courses) ?></div>
+        </div>
+    </div>
+
+    <div class="dash-section-title" style="margin-bottom:1.5rem; font-weight:700; font-size:1.25rem;">Your Published Courses</div>
     
     <?php if (count($courses) > 0): ?>
-    <div class="my-courses-grid">
+    <div class="my-courses-grid" style="display:grid; grid-template-columns:1fr; gap:1.25rem; margin-bottom:4rem;">
       <?php foreach ($courses as $course): ?>
-        <div class="my-course-card">
-          <div class="my-course-thumb">
+        <div class="my-course-card" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; display:flex; padding:1rem; align-items:center; gap:1.5rem;">
+          <div class="my-course-thumb" style="width:120px; height:80px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center;">
             <?php if (strpos($course['thumbnail'], '/') !== false || strpos($course['thumbnail'], '.') !== false): ?>
-              <img src="<?= htmlspecialchars($course['thumbnail']) ?>" alt="Thumbnail">
+              <img src="<?= htmlspecialchars($course['thumbnail']) ?>" alt="Thumbnail" style="width:100%; height:100%; object-fit:cover;">
             <?php else: ?>
-              <span class="emoji-thumb"><?= htmlspecialchars($course['thumbnail']) ?></span>
+              <span style="font-size:1.5rem;"><?= htmlspecialchars($course['thumbnail']) ?></span>
             <?php endif; ?>
           </div>
-          <div class="my-course-info">
-            <h4><?= htmlspecialchars($course['title']) ?></h4>
-            <span class="course-meta-inline"><?= htmlspecialchars($course['level']) ?> • <?= htmlspecialchars($course['students_count']) ?> Students Enrolled</span>
-            <div style="margin-top:1.25rem; display:flex; gap:0.75rem;">
-              <a href="course_view.php?id=<?= $course['id'] ?>" class="btn btn-outline" style="padding:0.5rem 1.25rem; font-size:0.8rem;">Preview Content</a>
-              <a href="#" class="btn btn-outline" style="padding:0.5rem 1.25rem; font-size:0.8rem; opacity:0.5; cursor:not-allowed;">Edit Details</a>
-            </div>
+          <div class="my-course-info" style="flex:1;">
+            <h4 style="margin-bottom:0.4rem; font-size:1.1rem;"><?= htmlspecialchars($course['title']) ?></h4>
+            <div style="font-size:0.8rem; color:var(--text-muted);"><?= htmlspecialchars($course['level']) ?> • <?= htmlspecialchars($course['category']) ?></div>
+          </div>
+          <div class="my-course-actions" style="display:flex; gap:0.5rem;">
+            <a href="course_view.php?id=<?= $course['id'] ?>" class="btn btn-outline" style="font-size:0.75rem; padding:0.5rem 1rem;">View</a>
+            <a href="create_course.php?id=<?= $course['id'] ?>" class="btn btn-outline" style="font-size:0.75rem; padding:0.5rem 1rem;">Edit</a>
           </div>
         </div>
       <?php endforeach; ?>
     </div>
     <?php else: ?>
-      <div style="text-align:center; padding:4rem 2rem; background:var(--bg-surface); border-radius:12px; border:1px dashed var(--border);">
-        <p style="color:var(--text-muted); margin-bottom:1.5rem;">You haven't created any courses yet. Share your knowledge with the world!</p>
+      <div style="text-align:center; padding:4rem 2rem; background:var(--bg-surface); border-radius:12px; border:1px dashed var(--border); margin-bottom:4rem;">
+        <p style="color:var(--text-muted); margin-bottom:1.5rem;">You haven't created any courses yet.</p>
         <a href="create_course.php" class="btn btn-gold">Create Your First Course</a>
       </div>
     <?php endif; ?>
+
+    <!-- RECENT ENROLLMENTS -->
+    <div class="dash-section-title" style="margin-bottom:1.5rem; font-weight:700; font-size:1.25rem;">Recent Student Enrollments</div>
+    <div class="recent-enrollments-table" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem; text-align:left;">
+            <thead>
+                <tr style="background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border);">
+                    <th style="padding:1rem 1.5rem; font-weight:600;">Student</th>
+                    <th style="padding:1rem 1.5rem; font-weight:600;">Course</th>
+                    <th style="padding:1rem 1.5rem; font-weight:600;">Date</th>
+                    <th style="padding:1rem 1.5rem; font-weight:600;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($recentEnrollments)): ?>
+                    <tr>
+                        <td colspan="4" style="padding:2rem; text-align:center; color:var(--text-muted);">No enrollments yet.</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($recentEnrollments as $enr): ?>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:1rem 1.5rem;">
+                                <div style="font-weight:600;"><?= htmlspecialchars($enr['username']) ?></div>
+                                <div style="font-size:0.75rem; color:var(--text-muted);"><?= htmlspecialchars($enr['email']) ?></div>
+                            </td>
+                            <td style="padding:1rem 1.5rem;"><?= htmlspecialchars($enr['course_title']) ?></td>
+                            <td style="padding:1rem 1.5rem; color:var(--text-muted);"><?= date('M d, Y', strtotime($enr['enrolled_at'])) ?></td>
+                            <td style="padding:1rem 1.5rem; font-weight:600; color:var(--gold);"><?= formatPrice($enr['price_paid']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
   </main>
 </div>
 
