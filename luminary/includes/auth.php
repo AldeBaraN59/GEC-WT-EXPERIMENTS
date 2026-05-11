@@ -82,4 +82,9 @@ function logout($pdo = null) {
     session_unset();
     session_destroy();
 }
+
+// includes/init.php (excerpt)
+
+// after you have $currentUser from session:
+
 ?>

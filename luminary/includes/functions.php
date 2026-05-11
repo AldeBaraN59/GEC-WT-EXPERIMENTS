@@ -178,4 +178,11 @@ function formatDuration($seconds) {
     if ($h > 0) return "{$h}h {$m}m";
     return "{$m}m";
 }
+function get_theme_cookie_name(): string {
+    if (!isset($_SESSION['user_id']) || !is_numeric($_SESSION['user_id'])) {
+        return 'luminary_theme_guest';
+    }
+
+    return 'luminary_theme_user_' . (int) $_SESSION['user_id'];
+}
 ?>

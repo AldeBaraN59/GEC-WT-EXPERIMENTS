@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
     user_id INT NOT NULL,
     course_id INT NOT NULL,
     progress INT DEFAULT 0,
+    price_paid DECIMAL(10,2) DEFAULT NULL,
     status ENUM('active', 'completed') DEFAULT 'active',
     enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
