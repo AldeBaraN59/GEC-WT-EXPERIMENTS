@@ -128,12 +128,13 @@ $joined    = $user_data ? date('M Y', strtotime($user_data['created_at'])) : 'N/
   </main>
 </div>
 
-<script src="js/course-search.js"></script>
+
 <script src="js/progress-tracker.js"></script>
 <?php if (is_logged_in()): ?>
   <script>
     window.LUMINARY_THEME_COOKIE = "<?= htmlspecialchars(get_theme_cookie_name(), ENT_QUOTES, 'UTF-8') ?>";
   </script>
+  <script src="js/course-search.js"></script>
   <script src="js/theme-engine.js"></script>
 <?php endif; ?>
 </body>

@@ -45,13 +45,15 @@
 
 <footer><div class="footer-inner"><div class="footer-bottom" style="border-top:1px solid #1a1a1a;padding-top:1.5rem;"><p style="color:#444;font-size:0.8rem;">© 2026 Luminary Learning, Inc.</p><a class="btn btn-gold" href="pricing.php" style="padding:0.6rem 1.5rem;font-size:0.85rem;">Start learning today</a></div></div></footer>
 
-<script src="js/course-search.js"></script>
-<script src="js/progress-tracker.js"></script>
+
+
 <?php if (is_logged_in()): ?>
   <script>
     window.LUMINARY_THEME_COOKIE = "<?= htmlspecialchars(get_theme_cookie_name(), ENT_QUOTES, 'UTF-8') ?>";
   </script>
   <script src="js/theme-engine.js"></script>
+  <script src="js/course-search.js"></script>
+  
 <?php endif; ?>
 <script>function filterBtn(el){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}</script>
 </body>
