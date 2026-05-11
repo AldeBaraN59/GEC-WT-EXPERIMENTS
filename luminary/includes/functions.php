@@ -43,10 +43,43 @@ function getCurrentUser($pdo) {
 }
 
 /**
- * Format currency
+ * Flash Messages
  */
-function formatPrice($price) {
-    return '$' . number_format($price, 2);
+function setFlash($message, $type = 'success') {
+    $_SESSION['flash'] = ['message' => $message, 'type' => $type];
+}
+
+function getFlash() {
+    if (isset($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return $flash;
+    }
+    return null;
+}
+
+/**
+ * CSRF Protection
+ */
+function generateCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function verifyCsrfToken($token) {
+    if (!isset($_SESSION['csrf_token']) || $token !== $_SESSION['csrf_token']) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Price Formatter
+ */
+function formatPrice($amount) {
+    return '$' . number_format($amount, 2);
 }
 
 /**
@@ -113,6 +146,15 @@ function calculateHoursLearned($pdo, $userId) {
     $seconds = $stmt->fetchColumn();
     
     return round(($seconds ?? 0) / 3600, 1);
+}
+
+/**
+ * Get Last Viewed Lesson for a user
+ */
+function getLastViewedLesson($pdo, $userId, $courseId) {
+    $stmt = $pdo->prepare("SELECT material_id FROM user_progress WHERE user_id = ? AND course_id = ? ORDER BY completed_at DESC LIMIT 1");
+    $stmt->execute([$userId, $courseId]);
+    return $stmt->fetchColumn();
 }
 
 /**

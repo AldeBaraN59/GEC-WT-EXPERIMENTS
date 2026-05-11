@@ -3,7 +3,12 @@ require_once 'includes/header.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $stmt = $pdo->prepare("
-    SELECT c.*, u.username as instructor_name, u.bio as instructor_role 
+    SELECT 
+        c.*, 
+        u.username as instructor_name, 
+        u.bio as instructor_role,
+        (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as real_student_count,
+        (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as avg_rating
     FROM courses c 
     LEFT JOIN users u ON c.mentor_id = u.id 
     WHERE c.id = ?
@@ -14,6 +19,10 @@ $course = $stmt->fetch();
 if (!$course) {
     redirect('courses.php');
 }
+
+// Format the dynamic values
+$course['students_count'] = $course['real_student_count'];
+$course['rating'] = number_format($course['avg_rating'] ?: 0.0, 1);
 
 $pageTitle = $course['title'];
 // Fetch curriculum
@@ -59,43 +68,50 @@ if (isLoggedIn()) {
         <?php if ($isEnrolled): ?>
           <a class="btn btn-gold" href="course_view.php?id=<?php echo $course['id']; ?>">Continue Learning →</a>
         <?php elseif (isLoggedIn()): ?>
-          <form id="enrollForm" action="enroll.php" method="POST">
-            <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
-            <button type="submit" id="enrollBtn" class="btn btn-gold">Enroll Now</button>
-          </form>
+          <?php if ($_SESSION['role'] === 'mentor'): ?>
+            <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:12px; border:1px solid var(--border); text-align:center;">
+              <p style="color:var(--text-muted); margin-bottom:0;">Instructors cannot enroll in courses as students.</p>
+            </div>
+          <?php else: ?>
+            <form id="enrollForm" action="enroll.php" method="POST">
+              <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+              <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
+              <button type="submit" id="enrollBtn" class="btn btn-gold">Enroll Now</button>
+            </form>
 
-          <script>
-          document.getElementById('enrollForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('enrollBtn');
-            const originalText = btn.innerText;
-            btn.innerText = 'Processing...';
-            btn.disabled = true;
+            <script>
+            document.getElementById('enrollForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = document.getElementById('enrollBtn');
+                const originalText = btn.innerText;
+                btn.innerText = 'Processing...';
+                btn.disabled = true;
 
-            const formData = new FormData(this);
-            fetch('enroll.php', {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    btn.innerText = 'Redirecting...';
-                    window.location.href = data.redirect;
-                } else {
-                    alert('Enrollment failed: ' + data.error);
+                const formData = new FormData(this);
+                fetch('enroll.php', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.innerText = 'Redirecting...';
+                        window.location.href = data.redirect;
+                    } else {
+                        alert('Enrollment failed: ' + data.error);
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error('Enrollment error:', err);
                     btn.innerText = originalText;
                     btn.disabled = false;
-                }
-            })
-            .catch(err => {
-                console.error('Enrollment error:', err);
-                btn.innerText = originalText;
-                btn.disabled = false;
+                });
             });
-          });
-          </script>
+            </script>
+          <?php endif; ?>
         <?php else: ?>
           <a class="btn btn-gold" href="signup.php">Enroll Now</a>
         <?php endif; ?>

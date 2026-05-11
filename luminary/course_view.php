@@ -331,7 +331,7 @@ if (isLoggedIn()) {
               if (statusIcon) statusIcon.innerText = '✅';
             }
             
-            // Show alert for certificate if completed
+            // Show Review Modal if completed
             if (data.completed) {
               const confetti = document.createElement('div');
               confetti.style.position = 'fixed';
@@ -345,8 +345,8 @@ if (isLoggedIn()) {
               setTimeout(() => confetti.remove(), 3000);
               
               setTimeout(() => {
-                alert('Congratulations! You have completed the course. Your certificate has been generated.');
-              }, 500);
+                document.getElementById('reviewModal').style.display = 'flex';
+              }, 1000);
             }
           } else {
             alert('Error: ' + data.error);
@@ -355,6 +355,90 @@ if (isLoggedIn()) {
           }
         });
       }
+      </script>
+
+      <!-- REVIEW MODAL -->
+      <div id="reviewModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:10000; align-items:center; justify-content:center; padding:2rem;">
+        <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:20px; width:100%; max-width:500px; padding:3rem; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.5); animation: zoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div style="font-size:3rem; margin-bottom:1.5rem;">🏆</div>
+            <h2 style="font-size:1.75rem; margin-bottom:0.5rem;">Course Completed!</h2>
+            <p style="color:var(--text-muted); margin-bottom:2.5rem;">How would you rate your learning experience?</p>
+            
+            <div id="starRating" style="display:flex; justify-content:center; gap:0.75rem; margin-bottom:2rem;">
+                <?php for($i=1; $i<=5; $i++): ?>
+                    <span class="star" data-value="<?= $i ?>" style="font-size:2.5rem; cursor:pointer; color:var(--text-muted); transition:transform 0.2s, color 0.2s;">★</span>
+                <?php endfor; ?>
+            </div>
+
+            <textarea id="reviewComment" placeholder="Optional: Share your thoughts on the course..." style="width:100%; min-height:100px; background:var(--bg-base); border:1px solid var(--border); border-radius:12px; padding:1rem; color:var(--text-base); outline:none; margin-bottom:2rem; resize:none;"></textarea>
+            
+            <div style="display:flex; gap:1rem;">
+                <button onclick="document.getElementById('reviewModal').style.display='none'" class="btn btn-outline" style="flex:1;">Skip</button>
+                <button id="submitReviewBtn" class="btn btn-gold" style="flex:2;">Submit Review</button>
+            </div>
+        </div>
+      </div>
+
+      <style>
+      @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .star.active { color: var(--gold) !important; transform: scale(1.2); }
+      .star:hover { transform: scale(1.3); }
+      </style>
+
+      <script>
+      let selectedRating = 0;
+      const stars = document.querySelectorAll('.star');
+      
+      stars.forEach(star => {
+          star.addEventListener('mouseover', function() {
+              const val = this.dataset.value;
+              stars.forEach(s => s.style.color = s.dataset.value <= val ? 'var(--gold)' : 'var(--text-muted)');
+          });
+          star.addEventListener('mouseleave', function() {
+              stars.forEach(s => s.style.color = s.dataset.value <= selectedRating ? 'var(--gold)' : 'var(--text-muted)');
+          });
+          star.addEventListener('click', function() {
+              selectedRating = this.dataset.value;
+              stars.forEach(s => s.classList.toggle('active', s.dataset.value <= selectedRating));
+          });
+      });
+
+      document.getElementById('submitReviewBtn').addEventListener('click', function() {
+          if (selectedRating === 0) {
+              alert('Please select a rating before submitting.');
+              return;
+          }
+          
+          this.disabled = true;
+          this.innerText = 'Submitting...';
+
+          fetch('submit_review.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  course_id: <?= $courseId ?>,
+                  rating: selectedRating,
+                  comment: document.getElementById('reviewComment').value
+              })
+          })
+          .then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  document.getElementById('reviewModal').innerHTML = `
+                    <div style="text-align:center; padding:2rem;">
+                        <div style="font-size:3rem; margin-bottom:1.5rem;">💎</div>
+                        <h2>Thank you!</h2>
+                        <p style="color:var(--text-muted); margin-top:1rem;">Your feedback helps us improve the community.</p>
+                        <button onclick="window.location.href='dashboard.php'" class="btn btn-gold" style="margin-top:2rem; width:100%;">Return to Dashboard</button>
+                    </div>
+                  `;
+              } else {
+                  alert('Error: ' + data.error);
+                  this.disabled = false;
+                  this.innerText = 'Submit Review';
+              }
+          });
+      });
       </script>
     <?php else: ?>
       <div class="viewer-content-area" style="background:var(--bg-surface);">

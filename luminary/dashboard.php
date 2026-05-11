@@ -157,8 +157,12 @@ $hoursLearned = calculateHoursLearned($pdo, $user['id']);
           <?php if (empty($enrolledCourses)): ?>
             <p>You haven't enrolled in any courses yet. <a href="courses.php" style="color:var(--gold);">Browse catalog</a></p>
           <?php else: ?>
-            <?php foreach ($enrolledCourses as $course): ?>
-              <a href="course_view.php?id=<?= $course['id'] ?>" class="my-course-card-link">
+            <?php foreach ($enrolledCourses as $course): 
+                $lastLessonId = getLastViewedLesson($pdo, $_SESSION['user_id'], $course['id']);
+                $resumeUrl = "course_view.php?id=" . $course['id'];
+                if ($lastLessonId) $resumeUrl .= "&mat=" . $lastLessonId;
+            ?>
+              <a href="<?= $resumeUrl ?>" class="my-course-card-link">
                 <div class="my-course-card">
                   <div class="my-course-thumb">
                     <?php if (strpos($course['thumbnail'], '/') !== false || strpos($course['thumbnail'], '.') !== false): ?>

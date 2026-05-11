@@ -3,6 +3,11 @@ require_once 'includes/init.php';
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Check
+    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
+        die("CSRF token validation failed.");
+    }
+
     $username = sanitize($_POST['username'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -16,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = signup($pdo, $username, $email, $password, $role, $bio);
         if ($result === true) {
+            setFlash("Welcome to Luminary, $username! Your account has been created.");
             login($pdo, $email, $password);
             if ($role === 'mentor') {
                 redirect('mentor_dashboard.php');
@@ -121,6 +127,7 @@ require_once 'includes/header.php';
       <?php endif; ?>
 
       <form action="signup.php" method="POST">
+        <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
         
         <!-- Toggle Switch -->
         <div class="role-toggle" style="display: flex; background: var(--bg-base); border-radius: 10px; padding: 0.4rem; margin-bottom: 2rem; border: 1px solid var(--border);">
