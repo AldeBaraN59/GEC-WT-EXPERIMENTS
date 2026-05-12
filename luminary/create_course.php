@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $level = trim($_POST['level'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $duration = trim($_POST['duration'] ?? '');
+    $skills = trim($_POST['skills'] ?? '');
     
     $thumbnailUrl = $isEdit ? $courseData['thumbnail'] : '🎨'; 
 
@@ -70,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($isEdit) {
             // Update Course
-            $stmt = $pdo->prepare("UPDATE courses SET title = ?, description = ?, category = ?, level = ?, price = ?, thumbnail = ?, duration = ? WHERE id = ?");
-            $stmt->execute([$title, $desc, $category, $level, $price, $thumbnailUrl, $duration, $courseId]);
+            $stmt = $pdo->prepare("UPDATE courses SET title = ?, description = ?, skills = ?, category = ?, level = ?, price = ?, thumbnail = ?, duration = ? WHERE id = ?");
+            $stmt->execute([$title, $desc, $skills, $category, $level, $price, $thumbnailUrl, $duration, $courseId]);
         } else {
             // Insert Course
-            $stmt = $pdo->prepare("INSERT INTO courses (mentor_id, title, description, category, level, price, thumbnail, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$currentUser['id'], $title, $desc, $category, $level, $price, $thumbnailUrl, $duration]);
+            $stmt = $pdo->prepare("INSERT INTO courses (mentor_id, title, description, skills, category, level, price, thumbnail, duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$currentUser['id'], $title, $desc, $skills, $category, $level, $price, $thumbnailUrl, $duration]);
             $courseId = $pdo->lastInsertId();
         }
 
@@ -450,6 +451,14 @@ require_once 'includes/header.php';
         </div>
       </div>
 
+      <div class="form-group">
+        <label>Skills You'll Gain (Press Enter to add)</label>
+        <input type="hidden" name="skills" id="skillsInput" value="<?= $isEdit ? htmlspecialchars($courseData['skills']) : '' ?>">
+        <div class="tags-input-wrapper" id="skillsTagsContainer">
+          <input type="text" id="skillsTagInput" placeholder="e.g. Python, Machine Learning, UI Design...">
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Price ($)</label>
@@ -476,27 +485,47 @@ require_once 'includes/header.php';
 
 <script>
 // --- TAGS SYSTEM ---
-const tagInput = document.getElementById('tagInput');
-const tagsContainer = document.getElementById('tagsContainer');
-const categoryInput = document.getElementById('categoryInput');
-let tags = categoryInput.value ? categoryInput.value.split(',').map(t => t.trim()) : [];
+function initTagManager(inputId, containerId, fieldId) {
+    const input = document.getElementById(inputId);
+    const container = document.getElementById(containerId);
+    const field = document.getElementById(fieldId);
+    if (!input || !container || !field) return;
 
-function renderTags() {
-    document.querySelectorAll('.tag-badge').forEach(e => e.remove());
-    tags.forEach(t => {
-        if (!t) return;
-        const span = document.createElement('span');
-        span.className = 'tag-badge';
-        span.textContent = t;
-        span.onclick = () => { tags = tags.filter(x => x !== t); renderTags(); };
-        tagsContainer.insertBefore(span, tagInput);
+    let tags = field.value ? field.value.split(',').map(t => t.trim()).filter(t => t) : [];
+
+    function render() {
+        container.querySelectorAll('.tag-badge').forEach(b => b.remove());
+        tags.forEach((t, i) => {
+            const badge = document.createElement('span');
+            badge.className = 'tag-badge';
+            badge.innerText = t;
+            badge.onclick = () => { tags.splice(i, 1); update(); };
+            container.insertBefore(badge, input);
+        });
+    }
+
+    function update() {
+        field.value = tags.join(', ');
+        render();
+    }
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = input.value.trim();
+            if (val && !tags.includes(val)) {
+                tags.push(val);
+                input.value = '';
+                update();
+            }
+        }
     });
-    categoryInput.value = tags.join(', ');
+
+    render();
 }
-renderTags();
-tagInput.addEventListener('keydown', function(e) {
-    if(e.key === 'Enter') { e.preventDefault(); const tag = this.value.trim(); if(tag && !tags.includes(tag)) { tags.push(tag); renderTags(); } this.value = ''; }
-});
+
+initTagManager('tagInput', 'tagsContainer', 'categoryInput');
+initTagManager('skillsTagInput', 'skillsTagsContainer', 'skillsInput');
 
 // --- CURRICULUM BUILDER ---
 let moduleCount = 0;
@@ -540,7 +569,7 @@ function addMaterial(modId, type, data = null) {
     const quizJson = data ? data.content : "[]";
 
     let html = `
-        <div class="material-block" id="mat_${matId}">
+        <div class="material-block ${type === 'quiz' ? 'quiz-block' : ''}" id="mat_${matId}">
             <input type="hidden" name="sections[${modId}][materials][${matId}][id]" value="${dbId}">
             <input type="hidden" name="sections[${modId}][materials][${matId}][type]" value="${type}">
             <div class="material-header">
@@ -600,13 +629,34 @@ function recalculateTotalDuration() {
 }
 
 // ... (Rest of Quiz Logic remains similar to original but needs to handle existing data)
+function addQuestion(matId) {
+    const qIdx = (window.qCounters = window.qCounters || {})[matId] = (window.qCounters[matId] || 0) + 1;
+    const container = document.getElementById(`quiz_questions_${matId}`);
+    const html = `<div class="quiz-question-block" id="qq_${matId}_${qIdx}" style="border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; background: rgba(0,0,0,0.15);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--gold); text-transform:uppercase;">Question ${qIdx}</span>
+            <button type="button" class="remove-btn" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="document.getElementById('qq_${matId}_${qIdx}').remove()">Remove</button>
+        </div>
+        <input type="text" class="input-styled quiz-q-text" placeholder="Enter your question here..." required style="margin-bottom:1.5rem;">
+        <div class="quiz-options-area" id="opts_${matId}_${qIdx}" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+        <button type="button" class="add-option-btn" onclick="addOption('${matId}', '${qIdx}')" style="margin-top:1.5rem; background:none; border:1px dashed var(--border); color:var(--text-muted); padding:0.5rem; width:100%; border-radius:8px; cursor:pointer;">+ Add Option</button>
+    </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    addOption(matId, qIdx); 
+    addOption(matId, qIdx); 
+}
+
 function renderExistingQuestion(matId, qData) {
     const qIdx = (window.qCounters = window.qCounters || {})[matId] = (window.qCounters[matId] || 0) + 1;
     const container = document.getElementById(`quiz_questions_${matId}`);
-    const html = `<div class="quiz-question-block" id="qq_${matId}_${qIdx}">
-        <input type="text" class="input-styled quiz-q-text" value="${qData.question}" placeholder="Question" required>
-        <div class="quiz-options-area" id="opts_${matId}_${qIdx}"></div>
-        <button type="button" class="add-option-btn" onclick="addOption('${matId}', '${qIdx}')">+ Option</button>
+    const html = `<div class="quiz-question-block" id="qq_${matId}_${qIdx}" style="border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; background: rgba(0,0,0,0.15);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--gold); text-transform:uppercase;">Question ${qIdx}</span>
+            <button type="button" class="remove-btn" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="document.getElementById('qq_${matId}_${qIdx}').remove()">Remove</button>
+        </div>
+        <input type="text" class="input-styled quiz-q-text" value="${qData.question}" placeholder="Question" required style="margin-bottom:1.5rem;">
+        <div class="quiz-options-area" id="opts_${matId}_${qIdx}" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+        <button type="button" class="add-option-btn" onclick="addOption('${matId}', '${qIdx}')" style="margin-top:1.5rem; background:none; border:1px dashed var(--border); color:var(--text-muted); padding:0.5rem; width:100%; border-radius:8px; cursor:pointer;">+ Add Option</button>
     </div>`;
     container.insertAdjacentHTML('beforeend', html);
     qData.options.forEach(opt => {
@@ -619,9 +669,11 @@ function addOption(matId, qIdx, text = "", isCorrect = false) {
     const key = `${matId}_${qIdx}`;
     const oIdx = (window.oCounters = window.oCounters || {})[key] = (window.oCounters[key] || 0) + 1;
     const container = document.getElementById(`opts_${matId}_${qIdx}`);
-    const html = `<div class="quiz-option-row">
-        <input type="radio" name="correct_${matId}_${qIdx}" ${isCorrect ? 'checked' : ''}>
-        <input type="text" class="quiz-opt-text" value="${text}" placeholder="Option" required style="flex:1;">
+    const optId = `opt_${matId}_${qIdx}_${oIdx}`;
+    const html = `<div class="quiz-option-row" id="${optId}" style="display:flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.03); padding:0.5rem 1rem; border-radius:8px;">
+        <input type="radio" name="correct_${matId}_${qIdx}" ${isCorrect ? 'checked' : ''} style="cursor:pointer;">
+        <input type="text" class="quiz-opt-text" value="${text}" placeholder="Option text..." required style="flex:1; background:none; border:none; color:#fff; outline:none; font-size:0.9rem;">
+        <button type="button" class="remove-btn" style="font-size:1rem; background:none; border:none; color:var(--rust); cursor:pointer;" onclick="document.getElementById('${optId}').remove()">×</button>
     </div>`;
     container.insertAdjacentHTML('beforeend', html);
 }
