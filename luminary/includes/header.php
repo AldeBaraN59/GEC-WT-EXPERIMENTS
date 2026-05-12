@@ -15,8 +15,15 @@ require_once __DIR__ . '/init.php';
       'sepia'   => ["--ink"=>"#2c1a0e","--paper"=>"#f2e8d5","--cream"=>"#faf4e8","--gold"=>"#a0621a","--gold-light"=>"#c8922a","--muted"=>"#7a6a58","--border"=>"#c8b898"],
       'frost'   => ["--ink"=>"#1a2a3a","--paper"=>"#eef4fb","--cream"=>"#f5f9ff","--gold"=>"#2a7ab8","--gold-light"=>"#4a9ad8","--muted"=>"#6a8298","--border"=>"#c8d8e8"]
   ];
-  $activeTheme = $_COOKIE['luminary_theme'] ?? 'classic';
+
+  $themeCookieName = function_exists('get_theme_cookie_name')
+      ? get_theme_cookie_name()
+      : 'luminary_theme';
+
+  $activeTheme = $_COOKIE[$themeCookieName] ?? 'classic';
+
   if (!isset($themes[$activeTheme])) $activeTheme = 'classic';
+
   echo "<style>:root {";
   foreach($themes[$activeTheme] as $k => $v) { echo "$k: $v;"; }
   echo "}</style>";
@@ -24,6 +31,17 @@ require_once __DIR__ . '/init.php';
 
   <link rel="stylesheet" href="style.css?v=<?= time() ?>">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <?php if (isset($currentUser)): ?>
+    <script>
+      window.LUMINARY_THEME_COOKIE = "<?= htmlspecialchars(get_theme_cookie_name(), ENT_QUOTES, 'UTF-8') ?>";
+    </script>
+  <?php else: ?>
+    <script>
+      window.LUMINARY_THEME_COOKIE = "luminary_theme_guest";
+    </script>
+  <?php endif; ?>
+
   <script src="js/theme-engine.js"></script>
 </head>
 <body>

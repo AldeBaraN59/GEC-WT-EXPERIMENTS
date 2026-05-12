@@ -47,14 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'httponly' => false,
             'samesite' => 'Lax',
         ]);
-$_SESSION['flash'] = [
-    'type' => 'success',
-    'message' => 'Settings updated successfully.'
-];
 
-header("Location: settings.php");
-exit;
-        
+        $_SESSION['flash'] = [
+            'type' => 'success',
+            'message' => 'Settings updated successfully.'
+        ];
+
+        header("Location: settings.php");
+        exit;
     }
 }
 
@@ -74,12 +74,86 @@ function e($v) {
 }
 ?>
 
-<div class="container" style="max-width:720px; margin:2.5rem auto 4rem; padding:0 1rem;">
-  <h1 style="margin-bottom:0.5rem;">Settings</h1>
-  <p style="color:var(--muted); margin-bottom:1.5rem;">Update your profile and theme preference.</p>
+<style>
+  .settings-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    color: var(--ink);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+
+  .settings-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--ink);
+  }
+
+  .settings-input,
+  .settings-select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .settings-input::placeholder {
+    color: var(--muted);
+  }
+
+  .settings-input:focus,
+  .settings-select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200, 146, 42, 0.15);
+  }
+
+  .settings-help {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .settings-title {
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .settings-subtitle {
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .settings-error {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #b3261e;
+    background: #fef4f4;
+    color: #b3261e;
+  }
+
+  .settings-success {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #0f7b3e;
+    background: #f3fbf6;
+    color: #0f7b3e;
+  }
+</style>
+
+<div class="container" style="max-width:720px; margin:2.5rem auto 4rem; padding:0 1rem; color:var(--ink);">
+  <h1 class="settings-subtitle">Settings</h1>
+  <p class="settings-subtitle">Update your profile and theme preference.</p>
 
   <?php if (!empty($errors)): ?>
-    <div style="margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; border:1px solid #b3261e; background:#fef4f4; color:#b3261e;">
+    <div class="settings-error">
       <ul style="margin:0; padding-left:1.25rem;">
         <?php foreach ($errors as $err): ?>
           <li><?= e($err) ?></li>
@@ -87,37 +161,37 @@ function e($v) {
       </ul>
     </div>
   <?php elseif ($success): ?>
-    <div style="margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; border:1px solid #0f7b3e; background:#f3fbf6; color:#0f7b3e;">
+    <div class="settings-success">
       Settings updated successfully.
     </div>
   <?php endif; ?>
 
-  <form method="post" action="settings.php" style="background:var(--paper); border:1px solid var(--border); border-radius:16px; padding:1.5rem 1.75rem;">
+  <form method="post" action="settings.php" class="settings-card">
     <div style="margin-bottom:1.25rem;">
-      <label for="username" style="display:block; font-weight:600; margin-bottom:0.35rem;">Username</label>
+      <label for="username" class="settings-label">Username</label>
       <input
         type="text"
         id="username"
         name="username"
         value="<?= e($currentUser['username']) ?>"
-        style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border); font-size:0.95rem;"
+        class="settings-input"
         required
       >
     </div>
 
     <div style="margin-bottom:1.25rem;">
-      <label for="theme" style="display:block; font-weight:600; margin-bottom:0.35rem;">Theme</label>
+      <label for="theme" class="settings-label">Theme</label>
       <select
         id="theme"
         name="theme"
-        style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border); font-size:0.95rem;"
+        class="settings-select"
       >
         <option value="classic"  <?= $currentThemeCookie === 'classic'  ? 'selected' : '' ?>>☀️ Classic</option>
         <option value="midnight" <?= $currentThemeCookie === 'midnight' ? 'selected' : '' ?>>🌙 Midnight</option>
         <option value="sepia"    <?= $currentThemeCookie === 'sepia'    ? 'selected' : '' ?>>📜 Sepia</option>
         <option value="frost"    <?= $currentThemeCookie === 'frost'    ? 'selected' : '' ?>>❄️ Frost</option>
       </select>
-      <p style="margin-top:0.35rem; font-size:0.85rem; color:var(--muted);">
+      <p class="settings-help">
         This theme will be saved as a cookie, just for your account on this browser.
       </p>
     </div>
