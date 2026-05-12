@@ -1,4 +1,4 @@
--- Luminary Database Schema
+-- abcd Database Schema
 
 CREATE DATABASE IF NOT EXISTS luminary_db;
 USE luminary_db;

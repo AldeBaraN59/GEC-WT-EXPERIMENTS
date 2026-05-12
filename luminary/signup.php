@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = signup($pdo, $username, $email, $password, $role, $bio);
         if ($result === true) {
-            setFlash("Welcome to Luminary, $username! Your account has been created.");
+            setFlash("Welcome to abcd, $username! Your account has been created.");
             login($pdo, $email, $password);
             if ($role === 'mentor') {
                 redirect('mentor_dashboard.php');
@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = "Sign Up";
+$activePage = 'signup';
 require_once 'includes/header.php';
 ?>
 

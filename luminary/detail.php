@@ -1,4 +1,5 @@
 <?php
+$activePage = 'courses';
 require_once 'includes/header.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -123,9 +124,69 @@ if (isLoggedIn()) {
           <li>Certificate of completion</li>
           <li>Industry-recognized curriculum</li>
         </ul>
+
+        <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem;">
+          <a href="#" id="openReportModal" style="color:var(--text-muted); font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.2s;">
+            <span>⚠️ Report this course</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- REPORT MODAL -->
+  <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); z-index:10000; align-items:center; justify-content:center; padding:2rem;">
+    <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:24px; padding:3rem; width:100%; max-width:500px; position:relative; box-shadow:0 30px 100px rgba(0,0,0,0.8);">
+      <button id="closeReportModal" style="position:absolute; top:1.5rem; right:1.5rem; background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      <h2 style="font-size:1.8rem; margin-bottom:1rem; font-family: 'Playfair Display', serif;">Report Course</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:2rem;">Help us maintain platform quality. Why are you reporting this course?</p>
+      
+      <form id="reportForm">
+        <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
+        <input type="hidden" name="course_id" value="<?= $id ?>">
+        <textarea name="reason" placeholder="e.g. Inappropriate content, poor quality, scam..." required
+                  style="width:100%; min-height:120px; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:12px; padding:1.25rem; color:#fff; font-size:1rem; margin-bottom:1.5rem; resize:none; font-family: 'DM Sans', sans-serif;"></textarea>
+        <button type="submit" id="submitReportBtn" class="btn btn-gold" style="width:100%; background:var(--gold); color:#000; font-weight:700;">Submit Report</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('openReportModal')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        <?php if (!isLoggedIn()): ?>
+            window.location.href = '/login.php';
+        <?php else: ?>
+            document.getElementById('reportModal').style.display = 'flex';
+        <?php endif; ?>
+    });
+
+    document.getElementById('closeReportModal')?.addEventListener('click', () => {
+        document.getElementById('reportModal').style.display = 'none';
+    });
+
+    document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitReportBtn');
+        btn.innerText = 'Submitting...';
+        btn.disabled = true;
+
+        fetch('/report_course.php', {
+            method: 'POST',
+            body: new FormData(this)
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                document.getElementById('reportModal').style.display = 'none';
+                this.reset();
+            }
+            btn.innerText = 'Submit Report';
+            btn.disabled = false;
+        });
+    });
+  </script>
 
   <!-- CURRICULUM -->
   <div class="course-curriculum" style="padding: 5rem 0;">

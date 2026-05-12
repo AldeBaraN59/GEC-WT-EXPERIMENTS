@@ -1,5 +1,5 @@
 <?php
-// Configuration settings for Luminary
+// Configuration settings for abcd
 
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_NAME', getenv('DB_NAME') ?: 'luminary_db');

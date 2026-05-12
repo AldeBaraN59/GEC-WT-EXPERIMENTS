@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = "Log In";
+$activePage = 'login';
 require_once 'includes/header.php';
 ?>
 

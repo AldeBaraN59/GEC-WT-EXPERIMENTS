@@ -32,6 +32,17 @@ function requireLogin() {
 }
 
 /**
+ * Require admin role for a page
+ */
+function requireAdmin() {
+    requireLogin();
+    if ($_SESSION['role'] !== 'admin') {
+        setFlash("Unauthorized access. Admin privileges required.", "error");
+        redirect('dashboard.php');
+    }
+}
+
+/**
  * Get current user details from session/database
  */
 function getCurrentUser($pdo) {

@@ -88,6 +88,11 @@ nav {
 }
 .nav-links a.nav-cta:hover { background: var(--gold-light); }
 
+.nav-links a.nav-admin:hover {
+  color: var(--gold-light);
+  background: rgba(212, 175, 55, 0.1);
+}
+
 /* ─── BUTTONS ─── */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5rem;

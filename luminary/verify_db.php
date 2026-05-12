@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/db.php';
 
-echo "<h1>Luminary Backend Verification</h1>";
+echo "<h1>abcd Backend Verification</h1>";
 
 try {
     // Check connection

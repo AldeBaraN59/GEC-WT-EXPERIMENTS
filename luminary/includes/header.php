@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/init.php';
+$activePage = $activePage ?? 'other';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,9 +23,9 @@ require_once __DIR__ . '/init.php';
   echo "}</style>";
   ?>
 
-  <link rel="stylesheet" href="style.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="/style.css?v=<?= time() ?>">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="js/theme-engine.js"></script>
+  <script src="/js/theme-engine.js"></script>
 </head>
 <body>
 
@@ -41,27 +42,34 @@ require_once __DIR__ . '/init.php';
   <?php endif; ?>
 
   <!-- BANNER -->
-  <div class="banner">🎓 New semester starting March 1st — Get 30% off all courses. <a href="pricing.php">See plans →</a></div>
+  <div class="banner">🎓 New semester starting March 1st — Get 30% off all courses. <a href="/pricing.php">See plans →</a></div>
 
   <!-- NAV -->
   <nav>
-    <a class="nav-logo" href="index.php"><?php echo substr(SITE_NAME, 0, 2); ?><span><?php echo substr(SITE_NAME, 2); ?></span></a>
+    <a class="nav-logo" href="/index.php"><?php echo substr(SITE_NAME, 0, 2); ?><span><?php echo substr(SITE_NAME, 2); ?></span></a>
     <div class="nav-links">
-      <a href="index.php" class="<?php echo ($activePage == 'home') ? 'active' : ''; ?>">Home</a>
-      <a href="courses.php" class="<?php echo ($activePage == 'courses') ? 'active' : ''; ?>">Courses</a>
-      <a href="about.php">About</a>
-      <a href="contact.php" class="<?php echo ($activePage == 'contact') ? 'active' : ''; ?>">Contact</a>
+      <a href="/index.php" class="<?php echo ($activePage == 'home') ? 'active' : ''; ?>">Home</a>
+      <a href="/courses.php" class="<?php echo ($activePage == 'courses') ? 'active' : ''; ?>">Courses</a>
+      <a href="/about.php">About</a>
+      <a href="/contact.php" class="<?php echo ($activePage == 'contact') ? 'active' : ''; ?>">Contact</a>
       
       <?php if (isLoggedIn()): ?>
-        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'mentor'): ?>
-          <a href="mentor_dashboard.php" class="<?php echo ($activePage == 'dashboard') ? 'active' : ''; ?>">Mentor Dashboard</a>
-        <?php else: ?>
-          <a href="dashboard.php" class="<?php echo ($activePage == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin' && $activePage === 'home'): ?>
+          <a href="/admin/index.php" class="<?php echo ($activePage == 'admin') ? 'active' : ''; ?>" style="color:var(--gold); font-weight:700;">Admin Panel</a>
         <?php endif; ?>
-        <a href="logout.php">Logout</a>
+
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'mentor'): ?>
+          <a href="/mentor_dashboard.php" class="<?php echo ($activePage == 'dashboard') ? 'active' : ''; ?>">Mentor Dashboard</a>
+        <?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'student'): ?>
+          <a href="/dashboard.php" class="<?php echo ($activePage == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+        <?php endif; ?>
+        <a href="/logout.php">Logout</a>
       <?php else: ?>
-        <a href="login.php">Login</a>
-        <a href="signup.php" class="nav-cta">Enroll Now</a>
+        <?php if ($activePage === 'home'): ?>
+          <a href="/admin_gate.php" class="nav-admin" style="color:var(--gold); font-weight:700; margin-right:1.5rem;">Admin Login</a>
+        <?php endif; ?>
+        <a href="/login.php">Login</a>
+        <a href="/signup.php" class="nav-cta">Enroll Now</a>
       <?php endif; ?>
     </div>
   </nav>

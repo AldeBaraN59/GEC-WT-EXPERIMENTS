@@ -2,7 +2,7 @@
 /**
  * init.php
  * 
- * Central initialization file for Luminary. 
+ * Central initialization file for abcd. 
  * Loads all core libraries and establishes database connection
  * without outputting any HTML, allowing for redirects.
  */
